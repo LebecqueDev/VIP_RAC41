@@ -28,7 +28,7 @@
             line-height: 1.5;
         }
 
-        /* Dashboard Stocks Responsie */
+        /* Dashboard Stocks Responsive */
         .stock-grid { 
             display: grid; 
             grid-template-columns: 1fr; 
@@ -42,17 +42,17 @@
         }
 
         .stock-card { 
-            color: ar(--white); 
+            color: var(--white); 
             padding: 18px; 
             border-radius: 12px; 
             text-align: center;
             box-shadow: 0 4px 6px rgba(0,0,0,0.07);
         }
 
-        .-bg { background: ar(--primary); }
-        .p-bg { background: ar(--accent); }
+        .v-bg { background: var(--primary); }
+        .vp-bg { background: var(--accent); }
 
-        .stock-al { 
+        .stock-val { 
             font-size: 2rem; 
             font-weight: 800; 
             display: block; 
@@ -61,7 +61,7 @@
 
         /* Cartes */
         .card { 
-            background: ar(--white); 
+            background: var(--white); 
             padding: 16px; 
             border-radius: 12px; 
             box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
@@ -71,13 +71,13 @@
         h2 { 
             margin-top: 0; 
             font-size: 1.1rem; 
-            color: ar(--primary); 
-            border-left: 4px solid ar(--accent); 
+            color: var(--primary); 
+            border-left: 4px solid var(--accent); 
             padding-left: 10px;
             margin-bottom: 15px;
         }
 
-        /* Formulaire Responsie */
+        /* Formulaire Responsive */
         .input-group { 
             display: grid; 
             grid-template-columns: 1fr; 
@@ -119,15 +119,15 @@
             gap: 8px;
         }
 
-        .btn-main { background: ar(--success); color: white; width: 100%; }
+        .btn-main { background: var(--success); color: white; width: 100%; }
         .btn-sec { background: rgba(255,255,255,0.2); color: white; font-size: 0.8em; }
-        .btn-del { background: ar(--danger); color: white; padding: 6px 10px; }
+        .btn-del { background: var(--danger); color: white; padding: 6px 10px; }
 
         /* Tableaux et Scroll Mobile */
         .table-container {
             width: 100%;
-            oerflow-x: auto;
-            -webkit-oerflow-scrolling: touch;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             border-radius: 8px;
             border: 1px solid #eee;
         }
@@ -135,7 +135,7 @@
         table { 
             width: 100%; 
             border-collapse: collapse; 
-            background: ar(--white);
+            background: var(--white);
             min-width: 700px; /* Garantit la lisibilité sur mobile */
         }
 
@@ -171,11 +171,11 @@
     </style>
 </head>
 <body>
-<di style="text-align: center; margin-bottom: 20px;">
-    <img src="img/IP.png" alt="Logo IP" style="max-width: 150px; height: auto;">
-</di>
-<di class="stock-grid">
-    <di class="stock-card -bg">
+<div style="text-align: center; margin-bottom: 20px;">
+    <img src="img/VIP.png" alt="Logo VIP" style="max-width: 150px; height: auto;">
+</div>
+<div class="stock-grid">
+    <div class="stock-card v-bg">
         <small>DISPO RÉELLE VIP</small>
         <span id="dispReelV" class="stock-val">-</span>
         <small>Initial (S1): <span id="initV">-</span></small><br>
@@ -198,16 +198,16 @@
     </div>
     <div class="input-group">
         <div class="day-box"><b>JEUDI</b><br>
-            <input type="number" id="j_v" placeholder="Prévu VIP"> 
-            <input type="number" id="j_vp" placeholder="Prévu VIP+">
+            <input type="number" id="j_v" placeholder="Prévu V"> 
+            <input type="number" id="j_vp" placeholder="Prévu V+">
         </div>
         <div class="day-box"><b>VENDREDI</b><br>
-            <input type="number" id="v_v" placeholder="Prévu VIP"> 
-            <input type="number" id="v_vp" placeholder="Prévu VIP+">
+            <input type="number" id="v_v" placeholder="Prévu V"> 
+            <input type="number" id="v_vp" placeholder="Prévu V+">
         </div>
         <div class="day-box"><b>SAMEDI</b><br>
-            <input type="number" id="s_v" placeholder="Prévu VIP"> 
-            <input type="number" id="s_vp" placeholder="Prévu VIP+">
+            <input type="number" id="s_v" placeholder="Prévu V"> 
+            <input type="number" id="s_vp" placeholder="Prévu V+">
         </div>
     </div>
     <button class="btn-main" onclick="ajouterVip()">Enregistrer l'engagement</button>
@@ -222,7 +222,7 @@
                     <th rowspan="2">Nom</th><th colspan="2">Sortis</th><th colspan="2">Prévu J</th><th colspan="2">Prévu V</th><th colspan="2">Prévu S</th><th colspan="2">TOTAL</th>
                 </tr>
                 <tr class="th-main">
-                    <th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th>
+                    <th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th>
                 </tr>
             </thead>
             <tbody id="theoBody"></tbody>
@@ -239,7 +239,7 @@
                     <th rowspan="2">Nom</th><th colspan="2">Rendu J</th><th colspan="2">Rendu V</th><th colspan="2">Rendu S</th><th colspan="2">TOTAL RENDU</th><th rowspan="2">Action</th>
                 </tr>
                 <tr class="th-main">
-                    <th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th>
+                    <th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th>
                 </tr>
             </thead>
             <tbody id="reelBody"></tbody>
