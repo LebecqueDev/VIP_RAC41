@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="img/miniature - 32x32.png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VIP Manager Gold - Flux & Stocks</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --accent: #6c5ce7;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --bg: #f4f7f6;
+            --white: #ffffff;
+            --text: #333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: var(--bg); 
+            padding: 10px; 
+            margin: 0;
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* Dashboard Stocks Responsive */
+        .stock-grid { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 12px; 
+            margin-bottom: 20px; 
+        }
+
+        @media (min-width: 768px) {
+            .stock-grid { grid-template-columns: 1fr 1fr; }
+            body { padding: 20px; }
+        }
+
+        .stock-card { 
+            color: var(--white); 
+            padding: 18px; 
+            border-radius: 12px; 
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+        }
+
+        .v-bg { background: var(--primary); }
+        .vp-bg { background: var(--accent); }
+
+        .stock-val { 
+            font-size: 2rem; 
+            font-weight: 800; 
+            display: block; 
+            margin: 4px 0; 
+        }
+
+        /* Cartes */
+        .card { 
+            background: var(--white); 
+            padding: 16px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05); 
+            margin-bottom: 20px; 
+        }
+
+        h2 { 
+            margin-top: 0; 
+            font-size: 1.1rem; 
+            color: var(--primary); 
+            border-left: 4px solid var(--accent); 
+            padding-left: 10px;
+            margin-bottom: 15px;
+        }
+
+        /* Formulaire Responsive */
+        .input-group { 
+            display: grid; 
+            grid-template-columns: 1fr; 
+            gap: 12px; 
+            margin-bottom: 12px; 
+        }
+
+        @media (min-width: 600px) {
+            .input-group { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+        }
+
+        .day-box { 
+            border: 1px solid #eee; 
+            padding: 12px; 
+            border-radius: 8px; 
+            background: #fafafa; 
+        }
+
+        input { 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            width: 100%; 
+            box-sizing: border-box; 
+            font-size: 16px; /* Empêche le zoom auto sur iOS */
+            margin-top: 5px;
+        }
+
+        button { 
+            padding: 12px 20px; 
+            border: none; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-main { background: var(--success); color: white; width: 100%; }
+        .btn-sec { background: rgba(255,255,255,0.2); color: white; font-size: 0.8em; }
+        .btn-del { background: var(--danger); color: white; padding: 6px 10px; }
+
+        /* Tableaux et Scroll Mobile */
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            background: var(--white);
+            min-width: 700px; /* Garantit la lisibilité sur mobile */
+        }
+
+        th, td { 
+            border: 1px solid #eee; 
+            padding: 12px 8px; 
+            text-align: center; 
+            font-size: 0.9em;
+        }
+
+        .th-main { background: #f8f9fa; font-weight: bold; }
+        
+        .editable { 
+            background: #fffde7; 
+            cursor: pointer; 
+            font-weight: bold; 
+            color: #d35400; 
+            border: 1px dashed #f1c40f !important; 
+        }
+
+        .col-tot { background: #f1f2f6; font-weight: 800; }
+
+        /* Barre d'action basse */
+        .action-bar {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .action-bar { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+<div style="text-align: center; margin-bottom: 20px;">
+    <img src="img/VIP.png" alt="Logo VIP" style="max-width: 150px; height: auto;">
+</div>
+<div class="stock-grid">
+    <div class="stock-card v-bg">
+        <small>DISPO RÉELLE VIP</small>
+        <span id="dispReelV" class="stock-val">-</span>
+        <small>Initial (S1): <span id="initV">-</span></small><br>
+        <button class="btn-sec" onclick="setStock('V')">⚙️ Régler Stock</button>
+    </div>
+    <div class="stock-card vp-bg">
+        <small>DISPO RÉELLE VIP+</small>
+        <span id="dispReelVP" class="stock-val">-</span>
+        <small>Initial (S2): <span id="initVP">-</span></small><br>
+        <button class="btn-sec" onclick="setStock('VP')">⚙️ Régler Stock</button>
+    </div>
+</div>
+
+<div class="card">
+    <h2>➕ Nouvel Enregistrement</h2>
+    <div class="input-group">
+        <input type="text" id="nom" placeholder="Nom du VIP">
+        <input type="number" id="prisV" placeholder="Distribués VIP">
+        <input type="number" id="prisVP" placeholder="Distribués VIP+">
+    </div>
+    <div class="input-group">
+        <div class="day-box"><b>JEUDI</b><br>
+            <input type="number" id="j_v" placeholder="Prévu V"> 
+            <input type="number" id="j_vp" placeholder="Prévu V+">
+        </div>
+        <div class="day-box"><b>VENDREDI</b><br>
+            <input type="number" id="v_v" placeholder="Prévu V"> 
+            <input type="number" id="v_vp" placeholder="Prévu V+">
+        </div>
+        <div class="day-box"><b>SAMEDI</b><br>
+            <input type="number" id="s_v" placeholder="Prévu V"> 
+            <input type="number" id="s_vp" placeholder="Prévu V+">
+        </div>
+    </div>
+    <button class="btn-main" onclick="ajouterVip()">Enregistrer l'engagement</button>
+</div>
+
+<div class="card">
+    <h2>📝 1. Suivi des Engagements (Théorique)</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr class="th-main">
+                    <th rowspan="2">Nom</th><th colspan="2">Sortis</th><th colspan="2">Prévu J</th><th colspan="2">Prévu V</th><th colspan="2">Prévu S</th><th colspan="2">TOTAL</th>
+                </tr>
+                <tr class="th-main">
+                    <th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th>
+                </tr>
+            </thead>
+            <tbody id="theoBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <h2>🎯 2. Suivi des Retours (Réels)</h2>
+    <div class="table-container">
+        <table id="reelTable">
+            <thead>
+                <tr class="th-main">
+                    <th rowspan="2">Nom</th><th colspan="2">Rendu J</th><th colspan="2">Rendu V</th><th colspan="2">Rendu S</th><th colspan="2">TOTAL RENDU</th><th rowspan="2">Action</th>
+                </tr>
+                <tr class="th-main">
+                    <th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th>
+                </tr>
+            </thead>
+            <tbody id="reelBody"></tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card action-bar">
+    <button onclick="exporterExcel()" style="background: #2980b9; color: white;">📥 Exporter Excel (.xlsx)</button>
+    <button onclick="resetGeneral()" style="background: var(--danger); color: white;">⚠️ Réinitialisation Complète</button>
+</div>
+
+<script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxQqcwAoQKJMa7qsOW1XSUlGxk_HklT6e27hBDNgV5v4IuZE6Y6w-s6HbMKetBN3mYR/exec";
+
+    async function loadData() {
+        try {
+            const resp = await fetch(SCRIPT_URL);
+            const data = await resp.json();
+            render(data);
+        } catch (e) { console.error("Erreur de chargement"); }
+    }
+
+    function render(payload) {
+        const rows = payload.rows;
+        const tBody = document.getElementById('theoBody');
+        const rBody = document.getElementById('reelBody');
+        tBody.innerHTML = ""; rBody.innerHTML = "";
+
+        let global = { distV:0, distVP:0, reelV:0, reelVP:0 };
+
+        rows.forEach(row => {
+            if(!row.Nom) return;
+
+            const pV = (Number(row.Prev_Jeu_V)||0) + (Number(row.Prev_Ven_V)||0) + (Number(row.Prev_Sam_V)||0);
+            const pVP = (Number(row.Prev_Jeu_VP)||0) + (Number(row.Prev_Ven_VP)||0) + (Number(row.Prev_Sam_VP)||0);
+            const rV = (Number(row.Reel_Jeu_V)||0) + (Number(row.Reel_Ven_V)||0) + (Number(row.Reel_Sam_V)||0);
+            const rVP = (Number(row.Reel_Jeu_VP)||0) + (Number(row.Reel_Ven_VP)||0) + (Number(row.Reel_Sam_VP)||0);
+            
+            global.distV += Number(row.Pris_VIP)||0; 
+            global.distVP += Number(row.Pris_VIP_Plus)||0;
+            global.reelV += rV; global.reelVP += rVP;
+
+            tBody.innerHTML += `<tr>
+                <td><b>${row.Nom}</b></td><td>${row.Pris_VIP||0}</td><td>${row.Pris_VIP_Plus||0}</td>
+                <td>${row.Prev_Jeu_V||0}</td><td>${row.Prev_Jeu_VP||0}</td>
+                <td>${row.Prev_Ven_V||0}</td><td>${row.Prev_Ven_VP||0}</td>
+                <td>${row.Prev_Sam_V||0}</td><td>${row.Prev_Sam_VP||0}</td>
+                <td class="col-tot">${pV}</td><td class="col-tot">${pVP}</td>
+            </tr>`;
+
+            rBody.innerHTML += `<tr>
+                <td><b>${row.Nom}</b></td>
+                <td class="editable" onclick="upd('${row.Nom}',4)">${row.Reel_Jeu_V||0}</td>
+                <td class="editable" onclick="upd('${row.Nom}',6)">${row.Reel_Jeu_VP||0}</td>
+                <td class="editable" onclick="upd('${row.Nom}',8)">${row.Reel_Ven_V||0}</td>
+                <td class="editable" onclick="upd('${row.Nom}',10)">${row.Reel_Ven_VP||0}</td>
+                <td class="editable" onclick="upd('${row.Nom}',12)">${row.Reel_Sam_V||0}</td>
+                <td class="editable" onclick="upd('${row.Nom}',14)">${row.Reel_Sam_VP||0}</td>
+                <td class="col-tot">${rV}</td><td class="col-tot">${rVP}</td>
+                <td><button class="btn-del" onclick="del('${row.Nom}')">X</button></td>
+            </tr>`;
+        });
+
+        document.getElementById('initV').innerText = payload.stockInitV;
+        document.getElementById('initVP').innerText = payload.stockInitVP;
+        document.getElementById('dispReelV').innerText = Number(payload.stockInitV) - global.distV + global.reelV;
+        document.getElementById('dispReelVP').innerText = Number(payload.stockInitVP) - global.distVP + global.reelVP;
+    }
+
+    async function ajouterVip() {
+        const p = {
+            action: "add", nom: document.getElementById('nom').value,
+            prisV: parseInt(document.getElementById('prisV').value)||0,
+            prisVP: parseInt(document.getElementById('prisVP').value)||0,
+            pjv: parseInt(document.getElementById('j_v').value)||0,
+            pjvp: parseInt(document.getElementById('j_vp').value)||0,
+            pvv: parseInt(document.getElementById('v_v').value)||0,
+            pvvp: parseInt(document.getElementById('v_vp').value)||0,
+            psv: parseInt(document.getElementById('s_v').value)||0,
+            psvp: parseInt(document.getElementById('s_vp').value)||0
+        };
+        if(!p.nom) return alert("Nom requis");
+        await fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify(p)});
+        location.reload();
+    }
+
+    async function upd(nom, col) {
+        const v = prompt("Quantité réelle rendue :");
+        if(v!==null && v !== "") {
+            await fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify({action:"update", nom:nom, colIndex:col, value:parseInt(v)})});
+            location.reload();
+        }
+    }
+
+    async function setStock(type) {
+        const v = prompt("Nouveau stock initial pour " + type + " :");
+        if(v) {
+            await fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify({action:"setStock", type:type, value:parseInt(v)})});
+            location.reload();
+        }
+    }
+
+    async function del(nom) {
+        if(confirm("Supprimer " + nom + " ?")) {
+            await fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify({action:"delete", nom:nom})});
+            location.reload();
+        }
+    }
+
+    function exporterExcel() {
+        var wb = XLSX.utils.table_to_book(document.getElementById("reelTable"), {sheet: "Retours_VIP"});
+        XLSX.writeFile(wb, "Suivi_VIP_" + new Date().toISOString().slice(0,10) + ".xlsx");
+    }
+
+    async function resetGeneral() {
+        if (prompt("Tapez 'effacer' pour tout supprimer :") === "effacer") {
+            await fetch(SCRIPT_URL, {method: 'POST', body: JSON.stringify({action: "resetComplet"})});
+            location.reload();
+        }
+    }
+
+    loadData();
+</script>
+</body>
+</html>
