@@ -28,7 +28,7 @@
             line-height: 1.5;
         }
 
-        /* Dashboard Stocks Responsive */
+        /* Dashboard Stocks Responsie */
         .stock-grid { 
             display: grid; 
             grid-template-columns: 1fr; 
@@ -42,7 +42,7 @@
         }
 
         .stock-card { 
-            color: var(--white); 
+            color: ar(--white); 
             padding: 18px; 
             border-radius: 12px; 
             text-align: center;
@@ -198,16 +198,16 @@
     </div>
     <div class="input-group">
         <div class="day-box"><b>JEUDI</b><br>
-            <input type="number" id="j_v" placeholder="Prévu V"> 
-            <input type="number" id="j_vp" placeholder="Prévu V+">
+            <input type="number" id="j_v" placeholder="Prévu VIP"> 
+            <input type="number" id="j_vp" placeholder="Prévu VIP+">
         </div>
         <div class="day-box"><b>VENDREDI</b><br>
-            <input type="number" id="v_v" placeholder="Prévu V"> 
-            <input type="number" id="v_vp" placeholder="Prévu V+">
+            <input type="number" id="v_v" placeholder="Prévu VIP"> 
+            <input type="number" id="v_vp" placeholder="Prévu VIP+">
         </div>
         <div class="day-box"><b>SAMEDI</b><br>
-            <input type="number" id="s_v" placeholder="Prévu V"> 
-            <input type="number" id="s_vp" placeholder="Prévu V+">
+            <input type="number" id="s_v" placeholder="Prévu VIP"> 
+            <input type="number" id="s_vp" placeholder="Prévu VIP+">
         </div>
     </div>
     <button class="btn-main" onclick="ajouterVip()">Enregistrer l'engagement</button>
@@ -222,7 +222,7 @@
                     <th rowspan="2">Nom</th><th colspan="2">Sortis</th><th colspan="2">Prévu J</th><th colspan="2">Prévu V</th><th colspan="2">Prévu S</th><th colspan="2">TOTAL</th>
                 </tr>
                 <tr class="th-main">
-                    <th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th>
+                    <th>V</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>V</th><th>VIP+</th><th>V</th><th>VIP+</th>
                 </tr>
             </thead>
             <tbody id="theoBody"></tbody>
@@ -239,7 +239,7 @@
                     <th rowspan="2">Nom</th><th colspan="2">Rendu J</th><th colspan="2">Rendu V</th><th colspan="2">Rendu S</th><th colspan="2">TOTAL RENDU</th><th rowspan="2">Action</th>
                 </tr>
                 <tr class="th-main">
-                    <th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th><th>V</th><th>V+</th>
+                    <th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th><th>VIP</th><th>VIP+</th>
                 </tr>
             </thead>
             <tbody id="reelBody"></tbody>
